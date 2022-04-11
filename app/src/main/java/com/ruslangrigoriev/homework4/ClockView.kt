@@ -99,16 +99,6 @@ class ClockView(
         initPaint()
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        getCurrentTime()
-        drawCircle(canvas)
-        drawScale(canvas)
-        drawHour(canvas)
-        drawMinute(canvas)
-        drawSecond(canvas)
-        postInvalidateDelayed(1000)
-    }
-
     private fun initPaint() {
         scalePaint = Paint()
         with(scalePaint) {
@@ -118,6 +108,16 @@ class ClockView(
         }
         handPaint = Paint()
         handPaint.isAntiAlias = true
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        getCurrentTime()
+        drawCircle(canvas)
+        drawScale(canvas)
+        drawHour(canvas)
+        drawMinute(canvas)
+        drawSecond(canvas)
+        postInvalidateDelayed(1000)
     }
 
     private fun getCurrentTime() {
@@ -148,20 +148,20 @@ class ClockView(
     }
 
     private fun drawHour(canvas: Canvas?) {
-        val mHour = hour + minute / 60
+        val mHour = hour + minute / 60 /* уточнение для плавного хода стрелки */
         val longRadius = halfSize * 0.5F
         val shortRadius = halfSize * 0.15F
-        val angle = (Math.PI / 6).toFloat()
+        val angle = (Math.PI / 6).toFloat() /* шаг часовой стрелки 30° */
         handPaint.strokeWidth = hourStrokeWidth
         handPaint.color = hourColor
         drawHand(longRadius, shortRadius, angle, mHour, canvas)
     }
 
     private fun drawMinute(canvas: Canvas?) {
-        val mMinute = minute + second / 60
+        val mMinute = minute + second / 60 /* уточнение для плавного хода стрелки */
         val longRadius = halfSize * 0.7F
         val shortRadius = halfSize * 0.2F
-        val angle = (Math.PI / 30).toFloat()
+        val angle = (Math.PI / 30).toFloat() /* шаг минутной стрелки 6° */
         handPaint.strokeWidth = minuteStrokeWidth
         handPaint.color = minuteColor
         drawHand(longRadius, shortRadius, angle, mMinute, canvas)
@@ -170,7 +170,7 @@ class ClockView(
     private fun drawSecond(canvas: Canvas?) {
         val longRadius = halfSize * 0.8F
         val shortRadius = halfSize * 0.25F
-        val angle = (Math.PI / 30).toFloat()
+        val angle = (Math.PI / 30).toFloat() /* шаг минутной стрелки 6° */
         handPaint.strokeWidth = secondStrokeWidth
         handPaint.color = secondColor
         drawHand(longRadius, shortRadius, angle, second, canvas)
