@@ -22,6 +22,7 @@ class ClockView(
         const val HOUR_DEFAULT_COLOR = Color.BLACK
         const val MINUTE_DEFAULT_COLOR = Color.BLUE
         const val SECOND_DEFAULT_COLOR = Color.RED
+        const val SCAlE_DEFAULT_COLOR = Color.BLACK
         const val HOUR_DEFAULT_WIDTH = 20F
         const val MINUTE_DEFAULT_WIDTH = 15F
         const val SECOND_DEFAULT_WIDTH = 7F
@@ -37,14 +38,14 @@ class ClockView(
     private var hourColor by Delegates.notNull<Int>()
     private var minuteColor by Delegates.notNull<Int>()
     private var secondColor by Delegates.notNull<Int>()
+    private var scaleColor by Delegates.notNull<Int>()
 
-    private var circleStrokeWidth by Delegates.notNull<Float>()
     private var scaleStrokeWidth by Delegates.notNull<Float>()
     private var hourStrokeWidth by Delegates.notNull<Float>()
     private var minuteStrokeWidth by Delegates.notNull<Float>()
     private var secondStrokeWidth by Delegates.notNull<Float>()
 
-    private lateinit var circlePaint: Paint
+    private lateinit var scalePaint: Paint
     private lateinit var handPaint: Paint
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : this(
@@ -78,6 +79,7 @@ class ClockView(
         hourColor = typedArray.getColor(R.styleable.ClockView_hourColor, HOUR_DEFAULT_COLOR)
         minuteColor = typedArray.getColor(R.styleable.ClockView_minuteColor, MINUTE_DEFAULT_COLOR)
         secondColor = typedArray.getColor(R.styleable.ClockView_secondColor, SECOND_DEFAULT_COLOR)
+        scaleColor = typedArray.getColor(R.styleable.ClockView_scaleColor, SCAlE_DEFAULT_COLOR)
         hourStrokeWidth = typedArray.getFloat(R.styleable.ClockView_hourWidth, HOUR_DEFAULT_WIDTH)
         minuteStrokeWidth = typedArray.getFloat(R.styleable.ClockView_minuteWidth, MINUTE_DEFAULT_WIDTH)
         secondStrokeWidth = typedArray.getFloat(R.styleable.ClockView_secondWidth, SECOND_DEFAULT_WIDTH)
@@ -91,11 +93,13 @@ class ClockView(
         size = widthSpecSize.coerceAtLeast(heightSpecSize)
         halfSize = size / 2.toFloat()
         setMeasuredDimension(size, size)
+
+        //установка зависимости толщины круга и делений от общего размера
+        scaleStrokeWidth = size / resources.displayMetrics.density / 15F
+        initPaint()
     }
 
     override fun onDraw(canvas: Canvas?) {
-        initCircleStrokeWidth()
-        initPaint()
         getCurrentTime()
         drawCircle(canvas)
         drawScale(canvas)
@@ -105,17 +109,10 @@ class ClockView(
         postInvalidateDelayed(1000)
     }
 
-    private fun initCircleStrokeWidth() {
-        //уствновка зависимости толщины круга и делений от общего размера
-        val sizeInDp = size / resources.displayMetrics.density
-        circleStrokeWidth = sizeInDp / 15F
-        scaleStrokeWidth = sizeInDp / 15F
-    }
-
     private fun initPaint() {
-        circlePaint = Paint()
-        with(circlePaint) {
-            color = Color.BLACK
+        scalePaint = Paint()
+        with(scalePaint) {
+            color = scaleColor
             isAntiAlias = true
             style = Paint.Style.STROKE
         }
@@ -131,20 +128,20 @@ class ClockView(
     }
 
     private fun drawCircle(canvas: Canvas?) {
-        circlePaint.strokeWidth = circleStrokeWidth
+        scalePaint.strokeWidth = scaleStrokeWidth
         canvas?.drawCircle(
             halfSize,
             halfSize,
-            halfSize - circleStrokeWidth / 2,
-            circlePaint
+            halfSize - scaleStrokeWidth / 2,
+            scalePaint
         )
     }
 
     private fun drawScale(canvas: Canvas?) {
         canvas?.save()
-        circlePaint.strokeWidth = scaleStrokeWidth
+        scalePaint.strokeWidth = scaleStrokeWidth
         for (i in 0..12) {
-            canvas?.drawLine(halfSize, 0f, halfSize, scaleStrokeWidth * 3, circlePaint)
+            canvas?.drawLine(halfSize, 0f, halfSize, scaleStrokeWidth * 3, scalePaint)
             canvas?.rotate(360 / 12.toFloat(), halfSize, halfSize)
         }
         canvas?.restore()

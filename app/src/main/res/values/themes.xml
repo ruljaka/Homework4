@@ -20,10 +20,14 @@
         <item name="hourColor">@color/black</item>
         <item name="minuteColor">@color/blue</item>
         <item name="secondColor">@color/red</item>
+        <item name="scaleColor">@color/black</item>
         <item name="hourWidth">@dimen/hourWidth</item>
         <item name="minuteWidth">@dimen/minuteWidth</item>
         <item name="secondWidth">@dimen/secondWidth</item>
     </style>
 
-    <style name="GlobalClockViewStyle" parent="DefaultClockViewStyle" />
+    <style name="GlobalClockViewStyle" parent="DefaultClockViewStyle" >
+        <item name="scaleColor">@color/black</item>
+    </style>
+
 </resources>

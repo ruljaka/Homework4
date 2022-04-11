@@ -4,6 +4,7 @@
         <attr name="hourColor" format="color" />
         <attr name="minuteColor" format="color" />
         <attr name="secondColor" format="color" />
+        <attr name="scaleColor" format="color" />
         <attr name="hourWidth" format="integer"/>
         <attr name="minuteWidth" format="integer"/>
         <attr name="secondWidth" format="integer"/>
