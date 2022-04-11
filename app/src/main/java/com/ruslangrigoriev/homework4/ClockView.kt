@@ -29,6 +29,7 @@ class ClockView(
 
     private var size by Delegates.notNull<Int>()
     private var halfSize by Delegates.notNull<Float>()
+
     private var hour by Delegates.notNull<Float>()
     private var minute by Delegates.notNull<Float>()
     private var second by Delegates.notNull<Float>()
@@ -78,17 +79,16 @@ class ClockView(
         minuteColor = typedArray.getColor(R.styleable.ClockView_minuteColor, MINUTE_DEFAULT_COLOR)
         secondColor = typedArray.getColor(R.styleable.ClockView_secondColor, SECOND_DEFAULT_COLOR)
         hourStrokeWidth = typedArray.getFloat(R.styleable.ClockView_hourWidth, HOUR_DEFAULT_WIDTH)
-        minuteStrokeWidth =
-            typedArray.getFloat(R.styleable.ClockView_minuteWidth, MINUTE_DEFAULT_WIDTH)
-        secondStrokeWidth =
-            typedArray.getFloat(R.styleable.ClockView_secondWidth, SECOND_DEFAULT_WIDTH)
+        minuteStrokeWidth = typedArray.getFloat(R.styleable.ClockView_minuteWidth, MINUTE_DEFAULT_WIDTH)
+        secondStrokeWidth = typedArray.getFloat(R.styleable.ClockView_secondWidth, SECOND_DEFAULT_WIDTH)
         typedArray.recycle()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        //установка одинаковой высоты и ширины по большему значению
         val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
         val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-        size = Math.min(widthSpecSize, heightSpecSize)
+        size = widthSpecSize.coerceAtLeast(heightSpecSize)
         halfSize = size / 2.toFloat()
         setMeasuredDimension(size, size)
     }
@@ -106,12 +106,10 @@ class ClockView(
     }
 
     private fun initCircleStrokeWidth() {
-        val sizeInDp = size.div(resources.displayMetrics.density)
-        circleStrokeWidth = sizeInDp / 20F
-        scaleStrokeWidth = sizeInDp / 10F
-//        hourStrokeWidth = sizeInDp.div(10F)
-//        minuteStrokeWidth = sizeInDp.div(13F)
-//        secondStrokeWidth = sizeInDp.div(20F)
+        //уствновка зависимости толщины круга и делений от общего размера
+        val sizeInDp = size / resources.displayMetrics.density
+        circleStrokeWidth = sizeInDp / 15F
+        scaleStrokeWidth = sizeInDp / 15F
     }
 
     private fun initPaint() {
@@ -146,58 +144,52 @@ class ClockView(
         canvas?.save()
         circlePaint.strokeWidth = scaleStrokeWidth
         for (i in 0..12) {
-            canvas?.drawLine(
-                halfSize,
-                0f,
-                halfSize,
-                scaleStrokeWidth * 2,
-                circlePaint
-            )
-            canvas?.rotate(
-                360 / 12.toFloat(),
-                halfSize,
-                halfSize
-            )
+            canvas?.drawLine(halfSize, 0f, halfSize, scaleStrokeWidth * 3, circlePaint)
+            canvas?.rotate(360 / 12.toFloat(), halfSize, halfSize)
         }
         canvas?.restore()
     }
 
     private fun drawHour(canvas: Canvas?) {
         val mHour = hour + minute / 60
-        val long = halfSize * 0.5
-        val short = halfSize * 0.15
-        val startX = (halfSize - short * sin(mHour * (Math.PI / 6))).toFloat()
-        val startY = (halfSize + short * cos(mHour * (Math.PI / 6))).toFloat()
-        val endX = (halfSize + long * sin(mHour * (Math.PI / 6))).toFloat()
-        val endY = (halfSize - long * cos(mHour * (Math.PI / 6))).toFloat()
+        val longRadius = halfSize * 0.5F
+        val shortRadius = halfSize * 0.15F
+        val angle = (Math.PI / 6).toFloat()
         handPaint.strokeWidth = hourStrokeWidth
         handPaint.color = hourColor
-        canvas?.drawLine(startX, startY, endX, endY, handPaint)
+        drawHand(longRadius, shortRadius, angle, mHour, canvas)
     }
 
     private fun drawMinute(canvas: Canvas?) {
         val mMinute = minute + second / 60
-        val long = halfSize * 0.7
-        val short = halfSize * 0.2
-        val startX = (halfSize - short * sin(mMinute * (Math.PI / 30))).toFloat()
-        val startY = (halfSize + short * cos(mMinute * (Math.PI / 30))).toFloat()
-        val endX = (halfSize + long * sin(mMinute * (Math.PI / 30))).toFloat()
-        val endY = (halfSize - long * cos(mMinute * (Math.PI / 30))).toFloat()
+        val longRadius = halfSize * 0.7F
+        val shortRadius = halfSize * 0.2F
+        val angle = (Math.PI / 30).toFloat()
         handPaint.strokeWidth = minuteStrokeWidth
         handPaint.color = minuteColor
-        canvas?.drawLine(startX, startY, endX, endY, handPaint)
+        drawHand(longRadius, shortRadius, angle, mMinute, canvas)
     }
 
     private fun drawSecond(canvas: Canvas?) {
-        val long = halfSize * 0.8
-        val short = halfSize * 0.25
-        val startX = (halfSize - short * sin(second * (Math.PI / 30))).toFloat()
-        val startY = (halfSize + short * cos(second * (Math.PI / 30))).toFloat()
-        val endX = (halfSize + long * sin(second * (Math.PI / 30))).toFloat()
-        val endY = (halfSize - long * cos(second * (Math.PI / 30))).toFloat()
+        val longRadius = halfSize * 0.8F
+        val shortRadius = halfSize * 0.25F
+        val angle = (Math.PI / 30).toFloat()
         handPaint.strokeWidth = secondStrokeWidth
         handPaint.color = secondColor
-        canvas?.drawLine(startX, startY, endX, endY, handPaint)
+        drawHand(longRadius, shortRadius, angle, second, canvas)
     }
 
+    private fun drawHand(
+        longRadius: Float,
+        shortRadius: Float,
+        angle: Float,
+        time: Float,
+        canvas: Canvas?
+    ) {
+        val startX = (halfSize - shortRadius * sin(time * angle))
+        val startY = (halfSize + shortRadius * cos(time * angle))
+        val endX = (halfSize + longRadius * sin(time * angle))
+        val endY = (halfSize - longRadius * cos(time * angle))
+        canvas?.drawLine(startX, startY, endX, endY, handPaint)
+    }
 }
