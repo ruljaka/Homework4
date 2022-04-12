@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import java.util.*
 import kotlin.math.cos
@@ -26,10 +27,8 @@ class ClockView(
         const val HOUR_DEFAULT_WIDTH = 20F
         const val MINUTE_DEFAULT_WIDTH = 15F
         const val SECOND_DEFAULT_WIDTH = 7F
+        const val DEFAULT_SIZE = 100F
     }
-
-    private var size by Delegates.notNull<Int>()
-    private var halfSize by Delegates.notNull<Float>()
 
     private var hour by Delegates.notNull<Float>()
     private var minute by Delegates.notNull<Float>()
@@ -47,6 +46,7 @@ class ClockView(
 
     private lateinit var scalePaint: Paint
     private lateinit var handPaint: Paint
+    private var halfSize by Delegates.notNull<Float>()
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : this(
         context,
@@ -87,16 +87,28 @@ class ClockView(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        //установка одинаковой высоты и ширины по большему значению
         val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
         val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-        size = widthSpecSize.coerceAtLeast(heightSpecSize)
-        halfSize = size / 2.toFloat()
+        val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
+        val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
+        //установка размера по умолчания для wrap_content
+        val size =
+            if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
+                TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    DEFAULT_SIZE,
+                    resources.displayMetrics
+                ).toInt()
+            } else {
+                //установка одинаковой высоты и ширины по меньшему значению
+                Math.min(widthSpecSize, heightSpecSize)
+            }
         setMeasuredDimension(size, size)
 
         //установка зависимости толщины круга и делений от общего размера
         scaleStrokeWidth = size / resources.displayMetrics.density / 15F
         initPaint()
+        halfSize = size / 2.toFloat()
     }
 
     private fun initPaint() {
