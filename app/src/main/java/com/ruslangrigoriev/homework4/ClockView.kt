@@ -25,8 +25,11 @@ class ClockView(
         const val SECOND_DEFAULT_COLOR = Color.RED
         const val SCAlE_DEFAULT_COLOR = Color.BLACK
         const val HOUR_DEFAULT_WIDTH = 20F
-        const val MINUTE_DEFAULT_WIDTH = 15F
-        const val SECOND_DEFAULT_WIDTH = 7F
+        const val MINUTE_DEFAULT_WIDTH = 10F
+        const val SECOND_DEFAULT_WIDTH = 5F
+        const val HOUR_DEFAULT_LENGTH = 100F
+        const val MINUTE_DEFAULT_LENGTH = 150F
+        const val SECOND_DEFAULT_LENGTH = 190F
         const val DEFAULT_SIZE = 100F
     }
 
@@ -43,6 +46,9 @@ class ClockView(
     private var hourStrokeWidth by Delegates.notNull<Float>()
     private var minuteStrokeWidth by Delegates.notNull<Float>()
     private var secondStrokeWidth by Delegates.notNull<Float>()
+    private var hourStrokeLength by Delegates.notNull<Float>()
+    private var minuteStrokeLength by Delegates.notNull<Float>()
+    private var secondStrokeLength by Delegates.notNull<Float>()
 
     private lateinit var scalePaint: Paint
     private lateinit var handPaint: Paint
@@ -80,9 +86,12 @@ class ClockView(
         minuteColor = typedArray.getColor(R.styleable.ClockView_minuteColor, MINUTE_DEFAULT_COLOR)
         secondColor = typedArray.getColor(R.styleable.ClockView_secondColor, SECOND_DEFAULT_COLOR)
         scaleColor = typedArray.getColor(R.styleable.ClockView_scaleColor, SCAlE_DEFAULT_COLOR)
-        hourStrokeWidth = typedArray.getFloat(R.styleable.ClockView_hourWidth, HOUR_DEFAULT_WIDTH)
-        minuteStrokeWidth = typedArray.getFloat(R.styleable.ClockView_minuteWidth, MINUTE_DEFAULT_WIDTH)
-        secondStrokeWidth = typedArray.getFloat(R.styleable.ClockView_secondWidth, SECOND_DEFAULT_WIDTH)
+        hourStrokeWidth = typedArray.getDimension(R.styleable.ClockView_hourWidth, HOUR_DEFAULT_WIDTH)
+        minuteStrokeWidth = typedArray.getDimension(R.styleable.ClockView_minuteWidth, MINUTE_DEFAULT_WIDTH)
+        secondStrokeWidth = typedArray.getDimension(R.styleable.ClockView_secondWidth, SECOND_DEFAULT_WIDTH)
+        hourStrokeLength = typedArray.getDimension(R.styleable.ClockView_hourLength, HOUR_DEFAULT_LENGTH)
+        minuteStrokeLength = typedArray.getDimension(R.styleable.ClockView_minuteLength, MINUTE_DEFAULT_LENGTH)
+        secondStrokeLength = typedArray.getDimension(R.styleable.ClockView_secondLength, SECOND_DEFAULT_LENGTH)
         typedArray.recycle()
     }
 
@@ -161,9 +170,9 @@ class ClockView(
 
     private fun drawHour(canvas: Canvas?) {
         val mHour = hour + minute / 60 /* уточнение для плавного хода стрелки */
-        val longRadius = halfSize * 0.5F
-        val shortRadius = halfSize * 0.15F
-        val angle = (Math.PI / 6).toFloat() /* шаг часовой стрелки 30° */
+        val longRadius = hourStrokeLength
+        val shortRadius = hourStrokeLength * 0.4F
+        val angle = (Math.PI / 6).toFloat() /* шаг стрелки 30° */
         handPaint.strokeWidth = hourStrokeWidth
         handPaint.color = hourColor
         drawHand(longRadius, shortRadius, angle, mHour, canvas)
@@ -171,18 +180,18 @@ class ClockView(
 
     private fun drawMinute(canvas: Canvas?) {
         val mMinute = minute + second / 60 /* уточнение для плавного хода стрелки */
-        val longRadius = halfSize * 0.7F
-        val shortRadius = halfSize * 0.2F
-        val angle = (Math.PI / 30).toFloat() /* шаг минутной стрелки 6° */
+        val longRadius = minuteStrokeLength
+        val shortRadius = minuteStrokeLength * 0.3F
+        val angle = (Math.PI / 30).toFloat() /* шаг стрелки 6° */
         handPaint.strokeWidth = minuteStrokeWidth
         handPaint.color = minuteColor
         drawHand(longRadius, shortRadius, angle, mMinute, canvas)
     }
 
     private fun drawSecond(canvas: Canvas?) {
-        val longRadius = halfSize * 0.8F
-        val shortRadius = halfSize * 0.25F
-        val angle = (Math.PI / 30).toFloat() /* шаг минутной стрелки 6° */
+        val longRadius = secondStrokeLength
+        val shortRadius = secondStrokeLength * 0.25F
+        val angle = (Math.PI / 30).toFloat() /* шаг стрелки 6° */
         handPaint.strokeWidth = secondStrokeWidth
         handPaint.color = secondColor
         drawHand(longRadius, shortRadius, angle, second, canvas)

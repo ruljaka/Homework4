@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="hourWidth">20</dimen>
-    <dimen name="minuteWidth">15</dimen>
-    <dimen name="secondWidth">10</dimen>
+    <dimen name="hourWidth">15dp</dimen>
+    <dimen name="minuteWidth">10dp</dimen>
+    <dimen name="secondWidth">5dp</dimen>
 </resources>

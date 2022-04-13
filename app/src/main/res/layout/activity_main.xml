@@ -7,17 +7,20 @@
     tools:context=".MainActivity">
 
     <com.ruslangrigoriev.homework4.ClockView
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="200dp"
         app:hourColor="#272727"
-        app:hourWidth="22"
+        app:hourWidth="10dp"
+        app:hourLength="40dp"
+        app:minuteColor="#691DEF"
+        app:minuteWidth="5dp"
+        app:minuteLength="60dp"
+        app:secondColor="#FF0258"
+        app:secondWidth="3dp"
+        app:secondLength="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:minuteColor="#691DEF"
-        app:minuteWidth="16"
-        app:secondColor="#FF0258"
-        app:secondWidth="7" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
