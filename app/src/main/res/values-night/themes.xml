@@ -12,5 +12,11 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="ClockViewStyle">@style/GlobalClockViewStyle</item>
+    </style>
+
+    <style name="GlobalClockViewStyle" parent="DefaultClockViewStyle" >
+        <item name="scaleColor">@color/white</item>
+        <item name="hourColor">@color/white</item>
     </style>
 </resources>
